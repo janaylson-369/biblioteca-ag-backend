@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -26,6 +27,9 @@ public class Livro {
 
     @ManyToMany(mappedBy = "livros")
     private Set<Autor> autores;
+
+    @OneToMany(mappedBy = "livro")
+    private List<Exemplar> exemplares;
 
     @Size(min = 1, max = 255, message = "campo deve ter entre 1 e 255 caracteres")
     @NotBlank(message = "campo nao deve ficar em branco")

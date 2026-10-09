@@ -3,7 +3,13 @@ package br.gov.biblioteca_ag_backend.model;
 import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tb_exemplar")
 public class Exemplar {
