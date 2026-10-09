@@ -4,6 +4,7 @@ import br.gov.biblioteca_ag_backend.enums.TipoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,9 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    private DadosLeitor dadosLeitor;
 
     @Column(nullable = false)
     @NotBlank(message = "campo não pode ficar em branco.")
@@ -39,7 +43,7 @@ public class Usuario {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "campo nao pode ser vazio")
+    @NotNull(message = "campo nao pode ser vazio")
     private TipoUsuario tipoUsuario;
 
     public Usuario(String nome, String telefone, String email, String senha_hash, TipoUsuario tipoUsuario) {
