@@ -18,6 +18,10 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", unique = true)
+    private Categoria categoria;
+
     @Size(min = 1, max = 255, message = "campo deve ter entre 1 e 255 caracteres")
     @NotBlank(message = "campo nao deve ficar em branco")
     @Column(nullable = false)
