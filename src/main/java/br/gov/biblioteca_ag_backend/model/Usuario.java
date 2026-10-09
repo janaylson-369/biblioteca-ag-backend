@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -67,7 +66,7 @@ public class Usuario implements UserDetails{
                 new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
                 new SimpleGrantedAuthority("ROLE_USUARIO"));
 
-        if (tipoUsuario == TipoUsuario.FUNCIONARIO) return List.of(
+        if (tipoUsuario == TipoUsuario.BIBLIOTECARIO) return List.of(
                 new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
                 new SimpleGrantedAuthority("ROLE_USUARIO"));
 
