@@ -2,6 +2,9 @@ package br.gov.biblioteca_ag_backend.model;
 
 import br.gov.biblioteca_ag_backend.enums.TipoUsuario;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity()
 @Table(name = "tb_usuarios")
@@ -28,29 +30,44 @@ public class Usuario implements UserDetails{
     private Long id;
 
     @Column(nullable = false)
+    @NotBlank(message = "campo não pode ficar em branco.")
+    @Size(min = 1, max = 100, message = "campo deve ficar entre 1 a 100 caracteres.")
     private String nome;
 
+    @Size(min = 1, max = 12, message = "campo deve ficar entre 1 e 12 caracteres.")
     private String telefone;
 
     @Column(unique = true)
+    @Email(message = "campo deve ser preenchido com um email.")
     private String email;
 
     @Column(nullable = false)
+    @NotBlank(message = "campo deve ser preenchido")
+    @Size(min = 5 ,message = "campo ter no minimo 5 caracteres")
     private String senha_hash;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TipoUsuario role;
+    @NotBlank(message = "campo nao pode ser vazio")
+    private TipoUsuario tipoUsuario;
+
+    public Usuario(String nome, String telefone, String email, String senha_hash, TipoUsuario tipoUsuario) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.email = email;
+        this.senha_hash = senha_hash;
+        this.tipoUsuario = tipoUsuario;
+    }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (role == TipoUsuario.ADMIN) return List.of(
+        if (tipoUsuario == TipoUsuario.ADMIN) return List.of(
                 new SimpleGrantedAuthority("ROLE_ADMIN"),
                 new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
                 new SimpleGrantedAuthority("ROLE_USUARIO"));
 
-        if (role == TipoUsuario.FUNCIONARIO) return List.of(
+        if (tipoUsuario == TipoUsuario.FUNCIONARIO) return List.of(
                 new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
                 new SimpleGrantedAuthority("ROLE_USUARIO"));
 
@@ -59,31 +76,31 @@ public class Usuario implements UserDetails{
 
     @Override
     public @Nullable String getPassword() {
-        return senha_hash;
+        return this.senha_hash;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }
