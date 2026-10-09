@@ -25,7 +25,8 @@ public class Categoria {
     @NotBlank(message = "campo não pode ser vazio.")
     private String nome;
 
-    public Categoria(String nome) {
+    public Categoria(List<Livro> livros, String nome) {
+        this.livros = livros;
         this.nome = nome;
     }
 }

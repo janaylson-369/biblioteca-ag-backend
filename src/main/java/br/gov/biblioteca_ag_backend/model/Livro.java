@@ -39,5 +39,13 @@ public class Livro {
     @Column(columnDefinition = "TEXT")
     private String sinopse;
 
+    public Livro(Categoria categoria, String nome, String isbn, String editora, String capa, String sinopse) {
+        this.categoria = categoria;
+        this.nome = nome;
+        this.isbn = isbn;
+        this.editora = editora;
+        this.capa = capa;
+        this.sinopse = sinopse;
+    }
 }
 
