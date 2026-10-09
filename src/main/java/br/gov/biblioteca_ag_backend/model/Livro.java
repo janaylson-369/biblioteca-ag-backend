@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +23,9 @@ public class Livro {
     @ManyToOne
     @JoinColumn(name = "id_categoria", unique = true)
     private Categoria categoria;
+
+    @ManyToMany(mappedBy = "livros")
+    private Set<Autor> autores;
 
     @Size(min = 1, max = 255, message = "campo deve ter entre 1 e 255 caracteres")
     @NotBlank(message = "campo nao deve ficar em branco")
