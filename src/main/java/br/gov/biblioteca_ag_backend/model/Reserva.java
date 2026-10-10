@@ -20,6 +20,10 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "id_livro")
+    private Livro livro;
+
     private LocalDateTime dataReserva;
 
     @Column(nullable = false)
