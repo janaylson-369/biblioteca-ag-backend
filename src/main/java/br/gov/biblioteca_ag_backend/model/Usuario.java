@@ -29,6 +29,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Emprestimo> emprestimos;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<Reserva> reservas;
+
     @Column(nullable = false)
     @NotBlank(message = "campo não pode ficar em branco.")
     @Size(min = 1, max = 100, message = "campo deve ficar entre 1 a 100 caracteres.")

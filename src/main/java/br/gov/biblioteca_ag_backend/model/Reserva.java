@@ -27,6 +27,10 @@ public class Reserva {
     @OneToOne(mappedBy = "reserva")
     private Emprestimo emprestimo;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+
     private LocalDateTime dataReserva;
 
     @Column(nullable = false)
