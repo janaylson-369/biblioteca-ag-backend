@@ -24,6 +24,9 @@ public class Reserva {
     @JoinColumn(name = "id_livro")
     private Livro livro;
 
+    @OneToOne(mappedBy = "reserva")
+    private Emprestimo emprestimo;
+
     private LocalDateTime dataReserva;
 
     @Column(nullable = false)

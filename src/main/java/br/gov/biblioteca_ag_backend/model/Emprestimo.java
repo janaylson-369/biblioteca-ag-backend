@@ -24,6 +24,10 @@ public class Emprestimo {
     @NotNull
     private Exemplar exemplar;
 
+    @OneToOne
+    @JoinColumn(name = "id_reserva")
+    private Reserva reserva;
+
     private LocalDateTime dataEmprestimo;
 
     private LocalDateTime dataprevisaoDevolucao;
