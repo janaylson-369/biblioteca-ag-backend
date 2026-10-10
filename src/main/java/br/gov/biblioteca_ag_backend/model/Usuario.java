@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,6 +25,9 @@ public class Usuario {
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.PERSIST)
     private DadosLeitor dadosLeitor;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Emprestimo> emprestimos;
 
     @Column(nullable = false)
     @NotBlank(message = "campo não pode ficar em branco.")
