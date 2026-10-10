@@ -19,6 +19,11 @@ public class Emprestimo {
     @NotNull
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_exemplar", nullable = false)
+    @NotNull
+    private Exemplar exemplar;
+
     private LocalDateTime dataEmprestimo;
 
     private LocalDateTime dataprevisaoDevolucao;
