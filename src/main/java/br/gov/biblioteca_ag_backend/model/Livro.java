@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.model;
 
+import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,7 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,13 +28,13 @@ public class Livro {
     @JoinColumn(name = "id_categoria", unique = true)
     private Categoria categoria;
 
-    @ManyToMany(mappedBy = "livros")
-    private Set<Autor> autores;
+    @ManyToMany(mappedBy = "livros", fetch = FetchType.LAZY)
+    private Set<Autor> autores = new HashSet<>();
 
-    @OneToMany(mappedBy = "livro")
+    @OneToMany(mappedBy = "livro", fetch = FetchType.LAZY)
     private List<Exemplar> exemplares;
 
-    @OneToMany(mappedBy = "livro")
+    @OneToMany(mappedBy = "livro", fetch = FetchType.LAZY)
     private List<Reserva> reservas;
 
     @Size(min = 1, max = 255, message = "campo deve ter entre 1 e 255 caracteres")
@@ -45,19 +48,35 @@ public class Livro {
     @Size(min = 0, max = 255, message = "o campo deve ter 0 e 255 caracteres")
     private String editora;
 
+    @Column(nullable = false)
     @NotNull(message = "campo nao deve ser nulo")
     private String capa;
 
     @Column(columnDefinition = "TEXT")
     private String sinopse;
 
-    public Livro(Categoria categoria, String nome, String isbn, String editora, String capa, String sinopse) {
+    public Livro(Categoria categoria, String nome, String isbn, String capa, String editora, String sinopse, Set<Autor> autores) {
         this.categoria = categoria;
         this.nome = nome;
         this.isbn = isbn;
-        this.editora = editora;
         this.capa = capa;
+        this.editora = editora;
         this.sinopse = sinopse;
+        this.autores = autores;
+    }
+
+    public void adicionarAutor(Autor autor) {
+        getAutores().add(autor);
+    }
+
+    public int obterExemplaresDisponiveis() {
+        int n = 0;
+        for (Exemplar ex : getExemplares()) {
+            if (ex.getStatus() == StatusExemplar.DISPONIVEL) {
+                n++;
+            }
+        }
+        return n;
     }
 }
 
