@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,16 +27,28 @@ public class Exemplar {
     private Livro livro;
 
     @OneToMany(mappedBy = "exemplar")
-    @NotNull
-    private List<Emprestimo> emprestimos;
+    private List<Emprestimo> emprestimos = new ArrayList<>();
 
     private String localizacaoEstante;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "campo nao pode ser vazio")
-    private StatusExemplar status;
+    private StatusExemplar status = StatusExemplar.DISPONIVEL;
 
     @Column(name = "n_tombamento", unique = true)
     private String nTombamento;
+
+    public Exemplar(Livro livro, String localizacaoEstante, String nTombamento) {
+        this.livro = livro;
+        this.localizacaoEstante = localizacaoEstante;
+        this.nTombamento = nTombamento;
+    }
+
+    public void atualizarStatus(StatusExemplar novoStatus) {
+        setStatus(novoStatus);
+    }
+
+    public boolean estaDisponivel() {
+        return (status == StatusExemplar.DISPONIVEL);
+    }
 }
