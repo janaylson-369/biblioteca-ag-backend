@@ -25,7 +25,7 @@ public class Livro {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_categoria", unique = true)
+    @JoinColumn(name = "id_categoria")
     private Categoria categoria;
 
     @ManyToMany(mappedBy = "livros", fetch = FetchType.LAZY)
