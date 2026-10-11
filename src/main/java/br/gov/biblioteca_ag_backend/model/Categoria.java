@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,13 +22,17 @@ public class Categoria {
     private Long id;
 
     @OneToMany(mappedBy = "categoria")
-    private List<Livro> livros;
+    private Set<Livro> livros = new HashSet<>();
 
     @NotBlank(message = "campo não pode ser vazio.")
     private String nome;
 
-    public Categoria(List<Livro> livros, String nome) {
-        this.livros = livros;
+    public Categoria(String nome) {
         this.nome = nome;
     }
+
+    public void adicionarLivro(Livro livro) {
+        getLivros().add(livro);
+    }
+
 }
