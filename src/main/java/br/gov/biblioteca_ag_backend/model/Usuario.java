@@ -47,7 +47,6 @@ public class Usuario {
 
     @Column(nullable = false)
     @NotBlank(message = "campo deve ser preenchido")
-    @Size(min = 5 ,message = "campo deve ter no minimo 5 caracteres")
     private String senha_hash;
 
     @Column(nullable = false)
