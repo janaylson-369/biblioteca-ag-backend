@@ -21,7 +21,7 @@ public class Reserva {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_livro")
+    @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;
 
     @OneToOne(mappedBy = "reserva")
@@ -31,9 +31,26 @@ public class Reserva {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
-    private LocalDateTime dataReserva;
+    private LocalDateTime dataReserva = LocalDateTime.now();
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatusReserva status;
+    private StatusReserva status = StatusReserva.ATIVA;
+
+    public Reserva(Livro livro, Usuario usuario) {
+        this.livro = livro;
+        this.usuario = usuario;
+    }
+
+    public void cancelar() {
+        setStatus(StatusReserva.CANCELADA);
+    }
+
+    public void marcarAtendida() {
+        setStatus(StatusReserva.ATENDIDA);
+    }
+
+    public boolean verificarExpiracao() {
+        return (status == StatusReserva.EXPIRADA);
+    }
 }
