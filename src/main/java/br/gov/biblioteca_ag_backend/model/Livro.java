@@ -42,6 +42,7 @@ public class Livro {
     @Column(nullable = false)
     private String nome;
 
+    @Column(unique = true)
     @Size(min = 0, max = 20, message = "o campo deve ter entre 0 e 20 cacaracteres")
     private String isbn;
 
