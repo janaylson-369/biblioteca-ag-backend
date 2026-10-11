@@ -10,12 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity()
+@Entity
 @Table(name = "tb_usuarios")
 public class Usuario {
 
@@ -23,21 +24,21 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "usuario")
     private DadosLeitor dadosLeitor;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Emprestimo> emprestimos;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Emprestimo> emprestimos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Reserva> reservas;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Reserva> reservas = new ArrayList<>();
 
     @Column(nullable = false)
     @NotBlank(message = "campo não pode ficar em branco.")
     @Size(min = 1, max = 100, message = "campo deve ficar entre 1 a 100 caracteres.")
     private String nome;
 
-    @Size(min = 1, max = 12, message = "campo deve ficar entre 1 e 12 caracteres.")
+    @Size(min = 1, max = 20, message = "campo deve ficar entre 1 e 20 caracteres.")
     private String telefone;
 
     @Column(unique = true)
@@ -46,19 +47,17 @@ public class Usuario {
 
     @Column(nullable = false)
     @NotBlank(message = "campo deve ser preenchido")
-    @Size(min = 5 ,message = "campo ter no minimo 5 caracteres")
+    @Size(min = 5 ,message = "campo deve ter no minimo 5 caracteres")
     private String senha_hash;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "campo nao pode ser vazio")
-    private TipoUsuario tipoUsuario;
+    private TipoUsuario tipoUsuario = TipoUsuario.LEITOR;
 
-    public Usuario(String nome, String telefone, String email, String senha_hash, TipoUsuario tipoUsuario) {
+    public Usuario(String nome, String telefone, String email, String senha_hash) {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.senha_hash = senha_hash;
-        this.tipoUsuario = tipoUsuario;
     }
 }
