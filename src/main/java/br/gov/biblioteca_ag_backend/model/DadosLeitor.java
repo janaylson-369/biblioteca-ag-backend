@@ -29,6 +29,7 @@ public class DadosLeitor {
     @Past
     private LocalDate dataNascimento;
 
+    @Column(nullable = false)
     private Boolean bloqueio = false;
 
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
