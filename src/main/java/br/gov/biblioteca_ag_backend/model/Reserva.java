@@ -31,6 +31,7 @@ public class Reserva {
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
+    @Column(nullable = false)
     private LocalDateTime dataReserva = LocalDateTime.now();
 
     @Column(nullable = false)
