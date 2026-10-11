@@ -22,14 +22,14 @@ public class DadosLeitor {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id_usuario", unique = true)
+    @JoinColumn(name = "id_usuario", unique = true, nullable = false)
     private Usuario usuario;
 
     @NotNull
     @Past
     private LocalDate dataNascimento;
 
-    private Boolean bloqueio;
+    private Boolean bloqueio = false;
 
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String logradouro;
@@ -43,9 +43,9 @@ public class DadosLeitor {
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String bairro;
 
-    public DadosLeitor(LocalDate dataNascimento, Boolean bloqueio, String logradouro, String numero, String complemento, String bairro) {
+    public DadosLeitor(Usuario usuario, LocalDate dataNascimento, String logradouro, String numero, String complemento, String bairro) {
+        this.usuario = usuario;
         this.dataNascimento = dataNascimento;
-        this.bloqueio = bloqueio;
         this.logradouro = logradouro;
         this.numero = numero;
         this.complemento = complemento;
@@ -60,7 +60,7 @@ public class DadosLeitor {
         setBloqueio(false);
     }
 
-    public Boolean estaBloqueado() {
+    public boolean estaBloqueado() {
         return bloqueio;
     }
 }
