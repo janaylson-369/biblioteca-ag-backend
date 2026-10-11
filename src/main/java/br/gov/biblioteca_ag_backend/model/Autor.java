@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -36,8 +35,11 @@ public class Autor {
     @NotBlank(message = "campo não pode ser vazio.")
     private String nome;
 
-    public Autor(Set<Livro> livros, String nome) {
-        this.livros = livros;
+    public Autor(String nome) {
         this.nome = nome;
+    }
+
+    public void vincularLivro(Livro livro) {
+        getLivros().add(livro);
     }
 }
