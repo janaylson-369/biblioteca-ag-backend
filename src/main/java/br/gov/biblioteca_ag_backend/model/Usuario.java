@@ -4,6 +4,7 @@ import br.gov.biblioteca_ag_backend.enums.TipoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,10 +18,13 @@ import java.util.Collection;
 import java.util.List;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity()
+@Entity
 @Table(name = "tb_usuarios")
 public class Usuario implements UserDetails{
 
@@ -28,12 +32,21 @@ public class Usuario implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(mappedBy = "usuario")
+    private DadosLeitor dadosLeitor;
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Emprestimo> emprestimos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Reserva> reservas = new ArrayList<>();
+
     @Column(nullable = false)
     @NotBlank(message = "campo não pode ficar em branco.")
     @Size(min = 1, max = 100, message = "campo deve ficar entre 1 a 100 caracteres.")
     private String nome;
 
-    @Size(min = 1, max = 12, message = "campo deve ficar entre 1 e 12 caracteres.")
+    @Size(min = 1, max = 20, message = "campo deve ficar entre 1 e 20 caracteres.")
     private String telefone;
 
     @Column(unique = true)
@@ -42,20 +55,17 @@ public class Usuario implements UserDetails{
 
     @Column(nullable = false)
     @NotBlank(message = "campo deve ser preenchido")
-    @Size(min = 5 ,message = "campo ter no minimo 5 caracteres")
     private String senha_hash;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "campo nao pode ser vazio")
-    private TipoUsuario tipoUsuario;
+    private TipoUsuario tipoUsuario = TipoUsuario.LEITOR;
 
-    public Usuario(String nome, String telefone, String email, String senha_hash, TipoUsuario tipoUsuario) {
+    public Usuario(String nome, String telefone, String email, String senha_hash) {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.senha_hash = senha_hash;
-        this.tipoUsuario = tipoUsuario;
     }
 
 
