@@ -20,7 +20,7 @@ public class Autor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_livro_autor",
             joinColumns = @JoinColumn(name = "id_autor"),

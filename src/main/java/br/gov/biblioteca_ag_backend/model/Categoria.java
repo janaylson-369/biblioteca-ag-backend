@@ -21,7 +21,7 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.EAGER)
     private Set<Livro> livros = new HashSet<>();
 
     @NotBlank(message = "campo não pode ser vazio.")

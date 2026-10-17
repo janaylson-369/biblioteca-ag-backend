@@ -20,14 +20,14 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_livro", nullable = false)
     private Livro livro;
 
-    @OneToOne(mappedBy = "reserva")
+    @OneToOne(mappedBy = "reserva", fetch = FetchType.EAGER)
     private Emprestimo emprestimo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 

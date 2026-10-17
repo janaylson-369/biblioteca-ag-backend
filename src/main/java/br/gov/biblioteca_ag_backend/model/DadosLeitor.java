@@ -21,7 +21,7 @@ public class DadosLeitor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", unique = true, nullable = false)
     private Usuario usuario;
 

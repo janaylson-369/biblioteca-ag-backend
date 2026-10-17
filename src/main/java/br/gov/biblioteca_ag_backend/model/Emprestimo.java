@@ -20,17 +20,17 @@ public class Emprestimo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario", nullable = false)
     @NotNull
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_exemplar", nullable = false)
     @NotNull
     private Exemplar exemplar;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_reserva")
     private Reserva reserva;
 
