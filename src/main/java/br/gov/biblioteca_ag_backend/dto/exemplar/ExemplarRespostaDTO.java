@@ -1,5 +1,7 @@
 package br.gov.biblioteca_ag_backend.dto.exemplar;
 
+import br.gov.biblioteca_ag_backend.model.Exemplar;
+
 public record ExemplarRespostaDTO(
         Long id,
 
@@ -10,4 +12,13 @@ public record ExemplarRespostaDTO(
 
         String nTombamento
 ) {
+    public static ExemplarRespostaDTO fromEntity(Exemplar exemplar) {
+        return new ExemplarRespostaDTO(
+                exemplar.getId(),
+                exemplar.getLivro().getId(),
+                exemplar.getLivro().getTitulo(),
+                exemplar.getLocalizacaoEstante(),
+                exemplar.getNTombamento()
+        );
+    }
 }
