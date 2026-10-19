@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.model;
 
+import br.gov.biblioteca_ag_backend.dto.livro.LivroRespostaDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
