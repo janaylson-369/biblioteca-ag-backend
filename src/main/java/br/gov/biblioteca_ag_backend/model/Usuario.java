@@ -32,7 +32,7 @@ public class Usuario implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
     private DadosLeitor dadosLeitor;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)

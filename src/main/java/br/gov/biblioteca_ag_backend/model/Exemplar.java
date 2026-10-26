@@ -21,12 +21,12 @@ public class Exemplar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_livro", nullable = false)
     @NotNull
     private Livro livro;
 
-    @OneToMany(mappedBy = "exemplar")
+    @OneToMany(mappedBy = "exemplar",fetch = FetchType.LAZY)
     private List<Emprestimo> emprestimos = new ArrayList<>();
 
     private String localizacaoEstante;

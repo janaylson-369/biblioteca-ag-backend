@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.model;
 
+import br.gov.biblioteca_ag_backend.dto.livro.LivroRespostaDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -14,14 +15,14 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_categoria")
+@Table(name = "tb_categorias")
 public class Categoria {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria", fetch = FetchType.EAGER)
     private Set<Livro> livros = new HashSet<>();
 
     @NotBlank(message = "campo não pode ser vazio.")
