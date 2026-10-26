@@ -53,8 +53,7 @@ public class Livro {
             message = "o campo deve ter 0 e 255 caracteres")
     private String editora;
 
-    @Column(nullable = false)
-    @NotNull(message = "campo nao deve ser nulo")
+    @Column(columnDefinition = "TEXT")
     private String capa;
 
     @Column(columnDefinition = "TEXT")

@@ -13,7 +13,7 @@ public record LivroRespostaDTO(
     public static LivroRespostaDTO fromEntity(Livro livro) {
         return new LivroRespostaDTO(
                 livro.getId(),
-                livro.getCategoria().getNome(),
+                (livro.getCategoria() != null ? livro.getCategoria().getNome() : "" ),
                 livro.getTitulo(),
                 livro.getIsbn(),
                 livro.getSinopse(),
