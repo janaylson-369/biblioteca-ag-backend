@@ -8,16 +8,20 @@ public record LivroRespostaDTO(
         String titulo,
         String isbn,
         String sinopse,
-        Integer anoPublicacao
+        Integer anoPublicacao,
+        String capa
 ) {
     public static LivroRespostaDTO fromEntity(Livro livro) {
         return new LivroRespostaDTO(
                 livro.getId(),
-                (livro.getCategoria() != null ? livro.getCategoria().getNome() : "" ),
+                livro.getCategoria() != null
+                        ? livro.getCategoria().getNome()
+                        : "",
                 livro.getTitulo(),
                 livro.getIsbn(),
                 livro.getSinopse(),
-                livro.getAnoPublicacao()
+                livro.getAnoPublicacao(),
+                livro.getCapa()
         );
     }
 }
