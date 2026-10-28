@@ -4,7 +4,9 @@ import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaRespostaDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaResumoDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CriarCategoriaDTO;
 import br.gov.biblioteca_ag_backend.model.Categoria;
+import br.gov.biblioteca_ag_backend.model.Livro;
 import br.gov.biblioteca_ag_backend.repository.CategoriaRepository;
+import br.gov.biblioteca_ag_backend.repository.LivroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +17,11 @@ import java.util.Optional;
 @Service
 public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
+    private final LivroRepository livroRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
+    public CategoriaService(CategoriaRepository categoriaRepository, LivroRepository livroRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.livroRepository = livroRepository;
     }
 
     public CategoriaRespostaDTO cadastrar(CriarCategoriaDTO dto) {
@@ -57,8 +61,12 @@ public class CategoriaService {
     }
 
     public void excluir(Long id) {
-        if(!categoriaRepository.existsById(id)) {
-            throw new EntityNotFoundException("Categoria não encotrada");
+        Optional<Categoria> c = categoriaRepository.findById(id);
+        if (c.isEmpty()) throw new EntityNotFoundException(String.format("Categoria de id %d inexistente.", id));
+
+        List<Livro> livros = livroRepository.findByCategoria_Id(id);
+        for (Livro livro: livros) {
+            livro.setCategoria(null);
         }
 
         categoriaRepository.deleteById(id);

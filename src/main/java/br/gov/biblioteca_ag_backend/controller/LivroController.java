@@ -5,7 +5,9 @@ import br.gov.biblioteca_ag_backend.dto.livro.CriarLivroDTO;
 import br.gov.biblioteca_ag_backend.dto.livro.LivroRespostaDTO;
 import br.gov.biblioteca_ag_backend.dto.livro.LivroResumoDTO;
 import br.gov.biblioteca_ag_backend.service.LivroService;
+import br.gov.biblioteca_ag_backend.validation.RequestValidator;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,12 @@ import java.util.List;
 @RequestMapping("/livros")
 public class LivroController {
 
-    public final LivroService livroService;
+    private final LivroService livroService;
+    private final RequestValidator requestValidator;
 
-    public LivroController(LivroService livroService) {
+    public LivroController(LivroService livroService, RequestValidator requestValidator) {
         this.livroService = livroService;
+        this.requestValidator = requestValidator;
     }
 
     @GetMapping("/{id}")
@@ -35,21 +39,35 @@ public class LivroController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<LivroRespostaDTO> cadastrar(@RequestPart("capa") MultipartFile capa, @Valid @RequestPart("dados") CriarLivroDTO dto) {
+    public ResponseEntity<LivroRespostaDTO> cadastrar(
+            @RequestPart(value = "capa", required = false) MultipartFile capa,
+            @RequestPart("dados") CriarLivroDTO dto) {
+
+        requestValidator.validar(dto ,capa, true, "capa");
+
         LivroRespostaDTO response = livroService.cadastrar(dto, capa);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<LivroRespostaDTO> atualizar(@PathVariable Long id, @Valid @RequestPart("dados") CriarLivroDTO dto, @RequestPart("capa") MultipartFile capa) {
-        LivroRespostaDTO response = livroService.atualizarCompleto(id, dto, capa);
+    public ResponseEntity<LivroRespostaDTO> atualizarCompleto(
+            @PathVariable Long id,
+            @RequestPart("dados") CriarLivroDTO dto,
+            @RequestPart(value = "capa", required = false) MultipartFile capa) {
 
+        requestValidator.validar(dto, capa, true, "capa");
+
+        LivroRespostaDTO response = livroService.atualizarCompleto(id, dto, capa);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<LivroRespostaDTO> atualizar(@PathVariable Long id, @RequestPart("dados") AtualizarLivroDTO dto, @RequestPart(value = "capa", required = false) MultipartFile capa) {
+    public ResponseEntity<LivroRespostaDTO> atualizar(
+            @PathVariable Long id,
+            @RequestPart("dados") AtualizarLivroDTO dto,
+            @RequestPart(value = "capa", required = false) MultipartFile capa) {
+        requestValidator.validar(dto);
 
         LivroRespostaDTO resposta = livroService.atualizar(id, dto, capa);
 
