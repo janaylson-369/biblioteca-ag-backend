@@ -50,6 +50,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleEmptyRequest(
+            ResourceAlreadyExistsException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getCampo(), ex.getMessage());
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("errors", errors);
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
     @ExceptionHandler(
             org.springframework.web.bind.MethodArgumentNotValidException.class
     )
