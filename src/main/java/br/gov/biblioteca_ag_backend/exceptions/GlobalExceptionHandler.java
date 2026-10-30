@@ -1,6 +1,7 @@
 
 package br.gov.biblioteca_ag_backend.exceptions;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +22,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(errorResponse);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(
+            ResourceNotFoundException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getCampo(), ex.getMessage());
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("errors", errors);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(EmptyRequestException.class)
+    public ResponseEntity<Map<String, Object>> handleEmptyRequest(
+            EmptyRequestException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put(ex.getCampo(), ex.getMessage());
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("errors", errors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(
