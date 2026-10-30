@@ -4,6 +4,7 @@ import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaRespostaDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaResumoDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CriarCategoriaDTO;
 import br.gov.biblioteca_ag_backend.service.CategoriaService;
+import br.gov.biblioteca_ag_backend.validation.RequestValidator;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,11 @@ import java.util.List;
 public class CategoriaController {
 
     public final CategoriaService categoriaService;
+    public final RequestValidator requestValidator;
 
-    public CategoriaController(CategoriaService categoriaService) {
+    public CategoriaController(CategoriaService categoriaService, RequestValidator requestValidator) {
         this.categoriaService = categoriaService;
+        this.requestValidator = requestValidator;
     }
 
     @GetMapping("/{id}")
@@ -32,14 +35,19 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaRespostaDTO> cadastrar(@Valid @RequestBody CriarCategoriaDTO dto) {
+    public ResponseEntity<CategoriaRespostaDTO> cadastrar(@RequestBody CriarCategoriaDTO dto) {
+
+        requestValidator.validar(dto);
+
         CategoriaRespostaDTO response = categoriaService.cadastrar(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoriaRespostaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CriarCategoriaDTO dto) {
+    public ResponseEntity<CategoriaRespostaDTO> atualizar(@PathVariable Long id, @RequestBody CriarCategoriaDTO dto) {
+        requestValidator.validar(dto);
+
         CategoriaRespostaDTO response = categoriaService.atualizar(id, dto);
 
         return ResponseEntity.ok(response);
