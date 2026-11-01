@@ -16,8 +16,8 @@ import java.util.List;
 @RequestMapping("/categorias")
 public class CategoriaController {
 
-    public final CategoriaService categoriaService;
-    public final RequestValidator requestValidator;
+    private final CategoriaService categoriaService;
+    private final RequestValidator requestValidator;
 
     public CategoriaController(CategoriaService categoriaService, RequestValidator requestValidator) {
         this.categoriaService = categoriaService;
