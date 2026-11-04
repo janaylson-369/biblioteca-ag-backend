@@ -3,6 +3,7 @@ package br.gov.biblioteca_ag_backend.service;
 import br.gov.biblioteca_ag_backend.dto.dadosLeitor.AtualizarDadosLeitorDTO;
 import br.gov.biblioteca_ag_backend.dto.dadosLeitor.CriarDadosLeitorDTO;
 import br.gov.biblioteca_ag_backend.dto.dadosLeitor.DadosLeitorCompletoDTO;
+import br.gov.biblioteca_ag_backend.exceptions.ResourceAlreadyExistsException;
 import br.gov.biblioteca_ag_backend.exceptions.ResourceNotFoundException;
 import br.gov.biblioteca_ag_backend.model.DadosLeitor;
 import br.gov.biblioteca_ag_backend.model.Usuario;
@@ -24,6 +25,11 @@ public class DadosLeitorService {
     public DadosLeitorCompletoDTO cadastrarDados(Long id_usuario, CriarDadosLeitorDTO dto) {
         Usuario u = usuarioRepository.findById(id_usuario).orElseThrow(
                 () -> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id_usuario))
+        );
+
+        if(dadosLeitorRepository.findByUsuario_Id(id_usuario) != null) throw new ResourceAlreadyExistsException(
+                "dados leitor existente",
+                String.format("usuario de id %d já possui dados de leitor cadastrados, utilize 'atualizar dados'",id_usuario)
         );
 
         DadosLeitor dl = new DadosLeitor(
