@@ -46,7 +46,7 @@ public class ExemplarController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ExemplarResumoDTO> atualizar(@PathVariable long id,@RequestBody AtualizarExemplarDTO dto) {
+    public ResponseEntity<ExemplarResumoDTO> atualizar(@PathVariable Long id,@RequestBody AtualizarExemplarDTO dto) {
         requestValidator.validar(dto);
 
         return ResponseEntity.ok(exemplarService.atualizar(id, dto));
