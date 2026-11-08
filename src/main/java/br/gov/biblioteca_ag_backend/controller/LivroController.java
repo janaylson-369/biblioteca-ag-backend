@@ -6,8 +6,6 @@ import br.gov.biblioteca_ag_backend.dto.livro.LivroRespostaDTO;
 import br.gov.biblioteca_ag_backend.dto.livro.LivroResumoDTO;
 import br.gov.biblioteca_ag_backend.service.LivroService;
 import br.gov.biblioteca_ag_backend.validation.RequestValidator;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
