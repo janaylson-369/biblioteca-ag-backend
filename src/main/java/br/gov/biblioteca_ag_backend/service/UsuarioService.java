@@ -1,9 +1,14 @@
+
 package br.gov.biblioteca_ag_backend.service;
 
 import br.gov.biblioteca_ag_backend.dto.usuario.*;
+import br.gov.biblioteca_ag_backend.enums.TipoUsuario;
+import br.gov.biblioteca_ag_backend.exceptions.RequestValidationException;
 import br.gov.biblioteca_ag_backend.exceptions.ResourceNotFoundException;
 import br.gov.biblioteca_ag_backend.model.Usuario;
 import br.gov.biblioteca_ag_backend.repository.DadosLeitorRepository;
+import br.gov.biblioteca_ag_backend.repository.EmprestimoRepository;
+import br.gov.biblioteca_ag_backend.repository.ReservaRepository;
 import br.gov.biblioteca_ag_backend.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,85 +18,149 @@ import java.util.List;
 
 @Service
 public class UsuarioService {
+
     private final UsuarioRepository usuarioRepository;
     private final DadosLeitorRepository dadosLeitorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmprestimoRepository emprestimoRepository;
+    private final ReservaRepository reservaRepository;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, DadosLeitorRepository dadosLeitorRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            DadosLeitorRepository dadosLeitorRepository,
+            PasswordEncoder passwordEncoder,
+            EmprestimoRepository emprestimoRepository,
+            ReservaRepository reservaRepository
+    ) {
         this.usuarioRepository = usuarioRepository;
         this.dadosLeitorRepository = dadosLeitorRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emprestimoRepository = emprestimoRepository;
+        this.reservaRepository = reservaRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<UsuarioRespostaDTO> listarTodos() {
-        return usuarioRepository.findAll().stream().map(UsuarioRespostaDTO::fromEntity).toList();
+        return usuarioRepository.findAll()
+                .stream()
+                .map(UsuarioRespostaDTO::fromEntity)
+                .toList();
     }
 
+    @Transactional(readOnly = true)
     public UsuarioResumoDTO buscarPorId(Long id) {
-        Usuario u = usuarioRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id))
-        );
-
-        return UsuarioResumoDTO.fromEntity(u);
+        Usuario usuario = obterUsuario(id);
+        return UsuarioResumoDTO.fromEntity(usuario);
     }
 
+    @Transactional
     public UsuarioRespostaDTO cadastrar(CriarUsuarioDTO dto) {
-        String senhaHash = passwordEncoder.encode(dto.senha_normal());
 
-        Usuario u = new Usuario();
+        validarEmailDisponivel(dto.email());
 
-        u.setNome(dto.nome());
-        u.setEmail(dto.email());
-        u.setSenha_hash(senhaHash);
-        u.setTelefone(dto.telefone());
+        Usuario usuario = new Usuario();
 
-        Usuario salvo = usuarioRepository.save(u);
+        usuario.setNome(dto.nome());
+        usuario.setTelefone(dto.telefone());
+        usuario.setEmail(dto.email());
+        usuario.setSenha_hash(passwordEncoder.encode(dto.senha_normal()));
 
-        return UsuarioRespostaDTO.fromEntity(salvo);
-    }
+        usuario.setTipoUsuario(TipoUsuario.LEITOR);
 
-    public UsuarioRespostaDTO atualizarCompleto(Long id, AtualizarUsuarioCompletoDTO dto) {
-        Usuario u = usuarioRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id))
-        );
+        Usuario salvo = usuarioRepository.save(usuario);
 
-        u.setNome(dto.nome());
-        u.setEmail(dto.email());
-        u.setTelefone(dto.telefone());
-        u.setEmail(dto.email());
-
-        Usuario salvo = usuarioRepository.save(u);
-        return UsuarioRespostaDTO.fromEntity(salvo);
-    }
-
-    public UsuarioRespostaDTO atualizar(Long id, AtualizarUsuarioDTO dto) {
-        Usuario u = usuarioRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id))
-        );
-
-        if (dto.nome() != null && !dto.nome().isBlank()) {
-            u.setNome(dto.nome());
-        }
-
-        if (dto.email() != null) {
-            u.setEmail(dto.email());
-        }
-
-        if (dto.telefone() != null) {
-            u.setTelefone(dto.telefone());
-        }
-
-        Usuario salvo = usuarioRepository.save(u);
         return UsuarioRespostaDTO.fromEntity(salvo);
     }
 
     @Transactional
-    public void excluir(Long id) {
-        Usuario u = usuarioRepository.findById(id).orElseThrow(
-                ()-> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente",id))
-        );
+    public UsuarioRespostaDTO atualizarCompleto(
+            Long id,
+            AtualizarUsuarioCompletoDTO dto
+    ) {
+        Usuario usuario = obterUsuario(id);
 
-        dadosLeitorRepository.delete(u.getDadosLeitor());
-        usuarioRepository.deleteById(id);
+        validarEmailDisponivel(dto.email(), id);
+
+        usuario.setNome(dto.nome());
+        usuario.setTelefone(dto.telefone());
+        usuario.setEmail(dto.email());
+
+        return UsuarioRespostaDTO.fromEntity(usuario);
+    }
+
+    @Transactional
+    public UsuarioRespostaDTO atualizar(
+            Long id,
+            AtualizarUsuarioDTO dto
+    ) {
+        Usuario usuario = obterUsuario(id);
+
+        if (dto.nome() != null) {
+            usuario.setNome(dto.nome());
+        }
+
+        if (dto.telefone() != null) {
+            usuario.setTelefone(dto.telefone());
+        }
+
+        if (dto.email() != null) {
+            validarEmailDisponivel(dto.email(), id);
+            usuario.setEmail(dto.email());
+        }
+
+        return UsuarioRespostaDTO.fromEntity(usuario);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        Usuario usuario = obterUsuario(id);
+
+        boolean possuiEmprestimos =
+                emprestimoRepository.existsByUsuario_Id(id);
+
+        boolean possuiReservas =
+                reservaRepository.existsByUsuario_Id(id);
+
+        if (possuiEmprestimos || possuiReservas) {
+            throw new RequestValidationException(
+                    "usuario possui reservas ou emprestimos",
+                    "Não é possível excluir o usuário, pois existem empréstimos ou reservas associados."
+            );
+        }
+
+        if (usuario.getDadosLeitor() != null) {
+            dadosLeitorRepository.delete(usuario.getDadosLeitor());
+        }
+
+        usuarioRepository.delete(usuario);
+    }
+
+
+    //==============================
+    private Usuario obterUsuario(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "id usuario",
+                        String.format("usuario de id %d inexistente", id)
+                ));
+    }
+
+    private void validarEmailDisponivel(String email) {
+        if (email != null && usuarioRepository.existsByEmail(email)) {
+            throw new RequestValidationException(
+                    "email",
+                    "Este endereço de e-mail já está cadastrado."
+            );
+        }
+    }
+
+    private void validarEmailDisponivel(String email, Long id) {
+        if (email != null &&
+                usuarioRepository.existsByEmailAndIdNot(email, id)) {
+            throw new RequestValidationException(
+                    "email",
+                    "Este endereço de e-mail já está cadastrado por outro usuário."
+            );
+        }
     }
 }
