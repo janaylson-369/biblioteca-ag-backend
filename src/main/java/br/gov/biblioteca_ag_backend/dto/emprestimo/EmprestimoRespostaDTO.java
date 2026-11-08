@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.dto.emprestimo;
 
+import br.gov.biblioteca_ag_backend.enums.StatusEmprestimo;
 import br.gov.biblioteca_ag_backend.model.Emprestimo;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,8 @@ public record EmprestimoRespostaDTO(
         Long id_exemplar,
         String titulo,
 
-        LocalDateTime dataPrevisaoDevolucao
+        LocalDateTime dataPrevisaoDevolucao,
+        StatusEmprestimo statusEmprestimo
 ) {
     public static EmprestimoRespostaDTO fromEntity(Emprestimo em) {
         return new EmprestimoRespostaDTO(
@@ -22,7 +24,8 @@ public record EmprestimoRespostaDTO(
                 em.getUsuario().getNome(),
                 em.getExemplar().getId(),
                 em.getExemplar().getLivro().getTitulo(),
-                em.getDataPrevisaoDevolucao()
+                em.getDataPrevisaoDevolucao(),
+                em.getStatus()
         );
     }
 }
