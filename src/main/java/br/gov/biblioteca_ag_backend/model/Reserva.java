@@ -2,7 +2,6 @@ package br.gov.biblioteca_ag_backend.model;
 
 import br.gov.biblioteca_ag_backend.enums.StatusReserva;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
