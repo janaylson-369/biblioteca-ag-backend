@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.repository;
 
+import br.gov.biblioteca_ag_backend.enums.StatusEmprestimo;
 import br.gov.biblioteca_ag_backend.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
     //UserDetails findByLogin(String email);
 
     List<Usuario> findByNomeStartingWith(String nome);
+
+    long countByIdAndEmprestimos_Status(Long id, StatusEmprestimo status);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, Long id);
 }

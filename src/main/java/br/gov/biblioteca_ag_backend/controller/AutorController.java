@@ -37,7 +37,7 @@ public class AutorController {
     public ResponseEntity<AutorRespostaDTO> cadastrar(@RequestBody CriarAutorDTO dto) {
         requestValidator.validar(dto);
 
-        return ResponseEntity.ok(autorService.cadastrar(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(autorService.cadastrar(dto));
     }
 
     @PutMapping("/{id}")
@@ -64,7 +64,7 @@ public class AutorController {
     @DeleteMapping("/{id}/livros")
     public ResponseEntity<AutorResumoDTO> removerLivros(
             @PathVariable Long id,
-            @RequestBody() List<Long> id_livros) {
+            @RequestBody List<Long> id_livros) {
 
         return ResponseEntity.ok(autorService.removerLivros(id, id_livros));
     }

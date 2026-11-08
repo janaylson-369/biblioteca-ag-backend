@@ -14,23 +14,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DadosLeitorService {
+
     private final DadosLeitorRepository dadosLeitorRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public DadosLeitorService(DadosLeitorRepository dadosLeitorRepository, UsuarioRepository usuarioRepository) {
+    public DadosLeitorService(
+            DadosLeitorRepository dadosLeitorRepository,
+            UsuarioRepository usuarioRepository
+    ) {
         this.dadosLeitorRepository = dadosLeitorRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
-    public DadosLeitorCompletoDTO cadastrarDados(Long id_usuario, CriarDadosLeitorDTO dto) {
-        Usuario u = usuarioRepository.findById(id_usuario).orElseThrow(
-                () -> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id_usuario))
-        );
+    @Transactional
+    public DadosLeitorCompletoDTO cadastrarDados(
+            Long id_usuario,
+            CriarDadosLeitorDTO dto
+    ) {
 
-        if(dadosLeitorRepository.findByUsuario_Id(id_usuario) != null) throw new ResourceAlreadyExistsException(
-                "dados leitor existente",
-                String.format("usuario de id %d já possui dados de leitor cadastrados, utilize 'atualizar dados'",id_usuario)
-        );
+        Usuario u = obterUsuario(id_usuario);
+
+        if (dadosLeitorRepository.existsByUsuario_Id(id_usuario)) {
+            throw new ResourceAlreadyExistsException(
+                    "dados leitor existente",
+                    String.format(
+                            "usuario de id %d já possui dados de leitor cadastrados, utilize 'atualizar dados'",
+                            id_usuario
+                    )
+            );
+        }
 
         DadosLeitor dl = new DadosLeitor(
                 u,
@@ -41,37 +53,50 @@ public class DadosLeitorService {
                 dto.bairro()
         );
 
+        // Sincroniza o lado inverso do relacionamento.
+        u.setDadosLeitor(dl);
+
         DadosLeitor salvo = dadosLeitorRepository.save(dl);
-        return DadosLeitorCompletoDTO.fromEntity(u,salvo);
+
+        return DadosLeitorCompletoDTO.fromEntity(u, salvo);
     }
 
+    @Transactional(readOnly = true)
     public DadosLeitorCompletoDTO buscarPorUsuarioId(Long id_usuario) {
-        Usuario u = usuarioRepository.findById(id_usuario).orElseThrow(
-                ()-> new ResourceNotFoundException("id usuario", String.format("usuario de id %d inexistente", id_usuario))
-        );
 
-        DadosLeitor dl = dadosLeitorRepository.findByUsuario_Id(id_usuario);
-
-        return DadosLeitorCompletoDTO.fromEntity(u ,dl);
-    }
-
-    @Transactional
-    public DadosLeitorCompletoDTO atualizar(Long id_usuario, AtualizarDadosLeitorDTO dto) {
-
-        Usuario u = usuarioRepository.findById(id_usuario).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        "id usuario",
-                        String.format("usuario de id %d inexistente", id_usuario)
-                )
-        );
+        Usuario u = obterUsuario(id_usuario);
 
         DadosLeitor dl = u.getDadosLeitor();
 
-        if (dl == null)
+        if (dl == null) {
+            throw new ResourceNotFoundException(
+                    "dados leitor",
+                    String.format(
+                            "usuario de id %d não possui dados de leitor cadastrados",
+                            id_usuario
+                    )
+            );
+        }
+
+        return DadosLeitorCompletoDTO.fromEntity(u, dl);
+    }
+
+    @Transactional
+    public DadosLeitorCompletoDTO atualizar(
+            Long id_usuario,
+            AtualizarDadosLeitorDTO dto
+    ) {
+
+        Usuario u = obterUsuario(id_usuario);
+
+        DadosLeitor dl = u.getDadosLeitor();
+
+        if (dl == null) {
             throw new ResourceNotFoundException(
                     "dados leitor",
                     "usuario sem dados de leitor, impossivel atualizar"
             );
+        }
 
         if (dto.dataNascimento() != null)
             dl.setDataNascimento(dto.dataNascimento());
@@ -88,6 +113,18 @@ public class DadosLeitorService {
         if (dto.numero() != null)
             dl.setNumero(dto.numero());
 
-        return DadosLeitorCompletoDTO.fromEntity(u , dl);
+        return DadosLeitorCompletoDTO.fromEntity(u, dl);
+    }
+
+    //=======================================
+    private Usuario obterUsuario(Long id_usuario) {
+        return usuarioRepository.findById(id_usuario)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "id usuario",
+                        String.format(
+                                "usuario de id %d inexistente",
+                                id_usuario
+                        )
+                ));
     }
 }
