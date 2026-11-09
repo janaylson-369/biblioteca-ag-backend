@@ -37,9 +37,7 @@ public class LivroService {
     }
 
     @Transactional
-    public LivroRespostaDTO cadastrar(
-            CriarLivroDTO dto,
-            MultipartFile arquivoCapa) {
+    public LivroRespostaDTO cadastrar(CriarLivroDTO dto, MultipartFile arquivoCapa) {
 
         Livro livro = new Livro();
 
@@ -51,12 +49,7 @@ public class LivroService {
 
 
         if (dto.id_categoria() != null) {
-            Categoria categoria = categoriaRepository
-                    .findById(dto.id_categoria())
-                    .orElseThrow(() ->
-                            new EntityNotFoundException(
-                                    "Categoria não encontrada: "
-                                            + dto.id_categoria()));
+            Categoria categoria = categoriaRepository.findById(dto.id_categoria()).orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada: " + dto.id_categoria()));
 
             livro.setCategoria(categoria);
         }
@@ -65,12 +58,10 @@ public class LivroService {
 
         if (idsAutores != null && !idsAutores.isEmpty()) {
 
-            Set<Autor> autores = new HashSet<>(
-                    autorRepository.findAllById(idsAutores));
+            Set<Autor> autores = new HashSet<>(autorRepository.findAllById(idsAutores));
 
             if (autores.size() != idsAutores.size()) {
-                throw new EntityNotFoundException(
-                        "Um ou mais autores não foram encontrados.");
+                throw new EntityNotFoundException("Um ou mais autores não foram encontrados.");
             }
 
             for (Autor autor : autores) {
@@ -82,8 +73,7 @@ public class LivroService {
         }
 
         //Valida, converte e salva a capa como WebP.
-        String caminhoCapa =
-                capaStorageService.salvar(arquivoCapa);
+        String caminhoCapa = capaStorageService.salvar(arquivoCapa);
 
         livro.setCapa(caminhoCapa);
 
@@ -118,14 +108,9 @@ public class LivroService {
     }
 
     @Transactional
-    public LivroRespostaDTO atualizar(
-            Long id,
-            AtualizarLivroDTO dto,
-            MultipartFile novaCapa) {
+    public LivroRespostaDTO atualizar(Long id, AtualizarLivroDTO dto, MultipartFile novaCapa) {
 
-        Livro livro = livroRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Livro não encontrado: " + id));
+        Livro livro = livroRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Livro não encontrado: " + id));
 
         if (dto.titulo() != null) {
             livro.setTitulo(dto.titulo());
@@ -148,22 +133,16 @@ public class LivroService {
         }
 
         if (dto.id_categoria() != null) {
-            Categoria categoria = categoriaRepository
-                    .findById(dto.id_categoria())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "Categoria não encontrada: "
-                                    + dto.id_categoria()));
+            Categoria categoria = categoriaRepository.findById(dto.id_categoria()).orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada: " + dto.id_categoria()));
 
             livro.setCategoria(categoria);
         }
 
         if (dto.id_autores() != null) {
-            Set<Autor> novosAutores = new HashSet<>(
-                    autorRepository.findAllById(dto.id_autores()));
+            Set<Autor> novosAutores = new HashSet<>(autorRepository.findAllById(dto.id_autores()));
 
             if (novosAutores.size() != dto.id_autores().size()) {
-                throw new EntityNotFoundException(
-                        "Um ou mais autores não foram encontrados.");
+                throw new EntityNotFoundException("Um ou mais autores não foram encontrados.");
             }
 
             // Autor é o lado proprietário do ManyToMany.
@@ -191,19 +170,13 @@ public class LivroService {
             excluirAposCommit(capaAntiga);
         }
 
-        return LivroRespostaDTO.fromEntity(
-                livroRepository.save(livro));
+        return LivroRespostaDTO.fromEntity(livroRepository.save(livro));
     }
 
     @Transactional
-    public LivroRespostaDTO atualizarCompleto(
-            Long id,
-            CriarLivroDTO dto,
-            MultipartFile novaCapa) {
+    public LivroRespostaDTO atualizarCompleto(Long id, CriarLivroDTO dto, MultipartFile novaCapa) {
 
-        Livro livro = livroRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Livro não encontrado: " + id));
+        Livro livro = livroRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Livro não encontrado: " + id));
 
         livro.setTitulo(dto.titulo());
         livro.setIsbn(dto.isbn());
@@ -213,27 +186,19 @@ public class LivroService {
 
 
         if (dto.id_categoria() != null) {
-            Categoria categoria = categoriaRepository
-                    .findById(dto.id_categoria())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "Categoria não encontrada: "
-                                    + dto.id_categoria()));
+            Categoria categoria = categoriaRepository.findById(dto.id_categoria()).orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada: " + dto.id_categoria()));
 
             livro.setCategoria(categoria);
         } else {
             livro.setCategoria(null);
         }
 
-        Set<Long> idsAutores = dto.id_autores() == null
-                ? Set.of()
-                : dto.id_autores();
+        Set<Long> idsAutores = dto.id_autores() == null ? Set.of() : dto.id_autores();
 
-        Set<Autor> novosAutores = new HashSet<>(
-                autorRepository.findAllById(idsAutores));
+        Set<Autor> novosAutores = new HashSet<>(autorRepository.findAllById(idsAutores));
 
         if (novosAutores.size() != idsAutores.size()) {
-            throw new EntityNotFoundException(
-                    "Um ou mais autores não foram encontrados.");
+            throw new EntityNotFoundException("Um ou mais autores não foram encontrados.");
         }
 
         // Remove os vínculos antigos pelo lado proprietário.
@@ -268,8 +233,7 @@ public class LivroService {
 
     @Transactional
     public void deletar(Long id) {
-        Livro livro = livroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        Livro livro = livroRepository.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
         for (Autor autor : new HashSet<>(livro.getAutores())) {
             autor.getLivros().remove(livro);
@@ -289,37 +253,31 @@ public class LivroService {
             return;
         }
 
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        try {
-                            capaStorageService.excluir(caminho);
-                        } catch (RuntimeException e) {
-                            // Registrar em log para permitir limpeza posterior.
-                            System.err.println(
-                                    "Falha ao excluir capa antiga: "
-                                            + e.getMessage());
-                        }
-                    }
-                });
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    capaStorageService.excluir(caminho);
+                } catch (RuntimeException e) {
+                    // Registrar em log para permitir limpeza posterior.
+                    System.err.println("Falha ao excluir capa antiga: " + e.getMessage());
+                }
+            }
+        });
     }
 
     private void excluirSeRollback(String caminho) {
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCompletion(int status) {
-                        if (status == STATUS_ROLLED_BACK) {
-                            try {
-                                capaStorageService.excluir(caminho);
-                            } catch (RuntimeException e) {
-                                System.err.println(
-                                        "Falha ao limpar capa nova: "
-                                                + e.getMessage());
-                            }
-                        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                if (status == STATUS_ROLLED_BACK) {
+                    try {
+                        capaStorageService.excluir(caminho);
+                    } catch (RuntimeException e) {
+                        System.err.println("Falha ao limpar capa nova: " + e.getMessage());
                     }
-                });
+                }
+            }
+        });
     }
 }

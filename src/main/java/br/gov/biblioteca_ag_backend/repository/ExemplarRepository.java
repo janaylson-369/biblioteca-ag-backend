@@ -10,4 +10,6 @@ public interface ExemplarRepository extends JpaRepository<Exemplar, Long> {
     List<Exemplar> findByLivro_Id(Long idLivro);
 
     List<Exemplar> findByStatus(StatusExemplar statusExemplar);
+
+    List<Exemplar> findByLivro_id(Long id_livro);
 }

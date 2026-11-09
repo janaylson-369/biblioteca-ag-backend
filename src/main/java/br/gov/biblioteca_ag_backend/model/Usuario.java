@@ -19,7 +19,6 @@ import java.util.List;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -112,4 +111,5 @@ public class Usuario implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
+
 }
