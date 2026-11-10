@@ -10,7 +10,19 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     List<Reserva> findByUsuario_Id(Long idUsuario);
 
+    boolean existsByUsuario_Id(Long idUsuario);
+
     List<Reserva> findByLivro_Id(Long idLivro);
 
     List<Reserva> findByStatus(StatusReserva statusReserva);
+
+    long countByStatusAndUsuario_Id(StatusReserva statusReserva, Long idUsuario);
+
+    boolean existsByUsuario_IdAndLivro_IdAndStatus(
+            Long usuarioId,
+            Long livroId,
+            StatusReserva status
+    );
+
+    boolean existsByLivro_Id(Long livroId);
 }

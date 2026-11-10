@@ -32,16 +32,16 @@ public class DadosLeitor {
     @Column(nullable = false)
     private Boolean bloqueio = false;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String logradouro;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String numero;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String complemento;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String bairro;
 
     public DadosLeitor(Usuario usuario, LocalDate dataNascimento, String logradouro, String numero, String complemento, String bairro) {

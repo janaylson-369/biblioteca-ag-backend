@@ -102,12 +102,22 @@
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.8</version>
 		</dependency>
-		<!-- Source: https://mvnrepository.com/artifact/org.sejda.imageio/webp-imageio -->
 		<dependency>
 			<groupId>org.sejda.imageio</groupId>
 			<artifactId>webp-imageio</artifactId>
 			<version>0.1.6</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>7.2.0-RC1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

@@ -3,7 +3,6 @@ package br.gov.biblioteca_ag_backend.model;
 import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,11 +44,11 @@ public class Livro {
     private String titulo;
 
     @Column(unique = true)
-    @Size(min = 0, max = 20,
+    @Size(max = 20,
             message = "o campo deve ter entre 0 e 20 caracteres")
     private String isbn;
 
-    @Size(min = 0, max = 255,
+    @Size(max = 255,
             message = "o campo deve ter 0 e 255 caracteres")
     private String editora;
 

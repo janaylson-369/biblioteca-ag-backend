@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.dto.exemplar;
 
+import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
 import br.gov.biblioteca_ag_backend.model.Exemplar;
 
 public record ExemplarRespostaDTO(
@@ -10,7 +11,8 @@ public record ExemplarRespostaDTO(
 
         String localizaoEstante,
 
-        String nTombamento
+        String nTombamento,
+        StatusExemplar status
 ) {
     public static ExemplarRespostaDTO fromEntity(Exemplar exemplar) {
         return new ExemplarRespostaDTO(
@@ -18,7 +20,8 @@ public record ExemplarRespostaDTO(
                 exemplar.getLivro().getId(),
                 exemplar.getLivro().getTitulo(),
                 exemplar.getLocalizacaoEstante(),
-                exemplar.getNTombamento()
+                exemplar.getNTombamento(),
+                exemplar.getStatus()
         );
     }
 }

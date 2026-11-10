@@ -9,9 +9,10 @@ public record CriarUsuarioDTO(
         @Size(max = 255, message = "campo deve ter menos de 255 caracteres")
         String nome,
 
-        @Size(min = 1, max = 20, message = "campo deve ficar entre 1 e 20 caracteres.")
+        @Size(max = 20, message = "campo deve ter menos de 20 caracteres.")
         String telefone,
 
+        @Size(max = 255, message = "campo deve ter menos de 255 caracteres.")
         @Email(message = "campo deve ser preenchido com um email.")
         String email,
 

@@ -35,7 +35,7 @@ public class Exemplar {
     @Enumerated(EnumType.STRING)
     private StatusExemplar status = StatusExemplar.DISPONIVEL;
 
-    @Column(name = "n_tombamento", unique = true)
+    @Column(name = "n_tombamento", nullable = false, unique = true)
     private String nTombamento;
 
     public Exemplar(Livro livro, String localizacaoEstante, String nTombamento) {

@@ -1,6 +1,9 @@
 package br.gov.biblioteca_ag_backend.model;
 
 import br.gov.biblioteca_ag_backend.enums.StatusEmprestimo;
+import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
+import br.gov.biblioteca_ag_backend.exceptions.RequestValidationException;
+import br.gov.biblioteca_ag_backend.exceptions.ResourceAlreadyExistsException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -52,28 +55,41 @@ public class Emprestimo {
 
     public void registrarDevolucao() {
         if (status == StatusEmprestimo.CONCLUIDO) {
-            throw new IllegalStateException(
-                    "Este empréstimo já foi concluído."
+            throw new ResourceAlreadyExistsException(
+                    "emprestimo já foi concluido",
+                    String.format("emprestimo de id %d", id)
             );
         }
+
         setDataDevolucaoReal(LocalDateTime.now());
         setStatus(StatusEmprestimo.CONCLUIDO);
+        exemplar.atualizarStatus(StatusExemplar.DISPONIVEL);
     }
 
     public void renovar(long diasAdicionais) {
         if (status == StatusEmprestimo.CONCLUIDO) {
-            throw new IllegalStateException(
+            throw new RequestValidationException(
+                    "Emprestimo já finalizado",
                     "Não é possível renovar um empréstimo concluído."
             );
         }
         if (dataPrevisaoDevolucao == null) {
-            throw new IllegalStateException(
+            throw new RequestValidationException(
+                    "Emprestimo sem data de devolução",
                     "O empréstimo não possui previsão de devolução."
             );
         }
         if (diasAdicionais <= 0) {
-            throw new IllegalArgumentException(
+            throw new RequestValidationException(
+                    "dias adicionais menor que 1",
                     "Os dias adicionais devem ser positivos."
+            );
+        }
+
+        if (status != StatusEmprestimo.EM_ANDAMENTO) {
+            throw new ResourceAlreadyExistsException(
+                    "Emprestimo deve estar em andamento",
+                    "Somente empréstimos em andamento podem ser renovados."
             );
         }
         LocalDateTime dataDevolucaoMaisAdicionais = getDataPrevisaoDevolucao().plusDays(diasAdicionais);

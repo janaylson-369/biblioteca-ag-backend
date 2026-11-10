@@ -3,37 +3,45 @@ package br.gov.biblioteca_ag_backend.service;
 import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaRespostaDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaResumoDTO;
 import br.gov.biblioteca_ag_backend.dto.categoria.CriarCategoriaDTO;
+import br.gov.biblioteca_ag_backend.exceptions.ResourceNotFoundException;
 import br.gov.biblioteca_ag_backend.model.Categoria;
+import br.gov.biblioteca_ag_backend.model.Livro;
 import br.gov.biblioteca_ag_backend.repository.CategoriaRepository;
-import jakarta.persistence.EntityNotFoundException;
+import br.gov.biblioteca_ag_backend.repository.LivroRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoriaService {
-    private final CategoriaRepository categoriaRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
+    private final CategoriaRepository categoriaRepository;
+    private final LivroRepository livroRepository;
+
+    public CategoriaService(
+            CategoriaRepository categoriaRepository,
+            LivroRepository livroRepository
+    ) {
         this.categoriaRepository = categoriaRepository;
+        this.livroRepository = livroRepository;
     }
 
+    @Transactional
     public CategoriaRespostaDTO cadastrar(CriarCategoriaDTO dto) {
         Categoria categoria = new Categoria();
         categoria.setNome(dto.nome());
 
-        Categoria salvo = categoriaRepository.save(categoria);
+        Categoria salva = categoriaRepository.save(categoria);
 
-        return CategoriaRespostaDTO.fromEntity(salvo);
+        return CategoriaRespostaDTO.fromEntity(salva);
     }
 
     @Transactional(readOnly = true)
     public CategoriaResumoDTO buscarPorId(Long id) {
-        Categoria buscado = categoriaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+        Categoria categoria = obterCategoria(id);
 
-        return CategoriaResumoDTO.fromEntity(buscado);
+        return CategoriaResumoDTO.fromEntity(categoria);
     }
 
     @Transactional(readOnly = true)
@@ -46,23 +54,33 @@ public class CategoriaService {
 
     @Transactional
     public CategoriaRespostaDTO atualizar(Long id, CriarCategoriaDTO dto) {
-        Optional<Categoria> c = categoriaRepository.findById(id);
-        if(c.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Categoria de id %d inexistente.",id));
-        }
-        Categoria categoria = c.get();
+        Categoria categoria = obterCategoria(id);
+
         categoria.setNome(dto.nome());
 
-        return CategoriaRespostaDTO.fromEntity(categoriaRepository.save(categoria));
+        return CategoriaRespostaDTO.fromEntity(categoria);
     }
 
+    @Transactional
     public void excluir(Long id) {
-        if(!categoriaRepository.existsById(id)) {
-            throw new EntityNotFoundException("Categoria não encotrada");
+        Categoria categoria = obterCategoria(id);
+
+        List<Livro> livros = livroRepository.findByCategoria_Id(id);
+
+        for (Livro livro : livros) {
+            livro.setCategoria(null);
         }
 
-        categoriaRepository.deleteById(id);
+        categoriaRepository.delete(categoria);
     }
 
+    // =========================
 
+    private Categoria obterCategoria(Long id) {
+        return categoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "id categoria",
+                        String.format("Categoria de id %d inexistente.", id)
+                ));
+    }
 }
