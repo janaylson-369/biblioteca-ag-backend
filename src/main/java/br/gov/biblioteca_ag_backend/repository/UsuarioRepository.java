@@ -7,7 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
-    UserDetails findByLogin(String email);
+
+    UserDetails findByEmail(String email);
 
     List<Usuario> findByNomeStartingWith(String nome);
 }
