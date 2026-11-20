@@ -14,11 +14,4 @@ public class RequestValidationException extends RuntimeException {
         super("Erro de validação da requisição");
         this.errors = Map.copyOf(errors);
     }
-
-    public RequestValidationException(String campo, String erro) {
-        super("Erro de validação da requisição");
-        Map<String, String> errors = new HashMap<>();
-        errors.put(campo, erro);
-        this.errors = errors;
-    }
 }

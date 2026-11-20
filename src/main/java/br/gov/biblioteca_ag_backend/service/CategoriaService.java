@@ -63,6 +63,11 @@ public class CategoriaService {
 
     @Transactional
     public void excluir(Long id) {
+        Optional<Categoria> c = categoriaRepository.findById(id);
+        if (c.isEmpty()) throw new EntityNotFoundException(String.format("Categoria de id %d inexistente.", id));
+
+        List<Livro> livros = livroRepository.findByCategoria_Id(id);
+        for (Livro livro: livros) {
         Categoria categoria = obterCategoria(id);
 
         List<Livro> livros = livroRepository.findByCategoria_Id(id);

@@ -2,6 +2,8 @@ package br.gov.biblioteca_ag_backend.repository;
 
 import br.gov.biblioteca_ag_backend.model.Autor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 

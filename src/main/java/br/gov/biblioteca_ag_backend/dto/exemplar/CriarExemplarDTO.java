@@ -12,7 +12,7 @@ public record CriarExemplarDTO(
         @Size(max = 255, message = "campo deve ter menos de 255 caracteres")
         String localizaoEstante,
 
-        @NotBlank(message = "número de tombamento é obrigatório")
+
         @Size(max = 255, message = "campo deve ter menos de 255 caracteres")
         String nTombamento
 ) {

@@ -12,29 +12,5 @@ public interface ExemplarRepository extends JpaRepository<Exemplar, Long> {
 
     List<Exemplar> findByStatus(StatusExemplar statusExemplar);
 
-    List<Exemplar> findByLivro_id(Long livroId);
-
-    boolean existsByLivro_Id(Long livroId);
-
-    boolean existsByNTombamento(String nTombamento);
-
-    boolean existsByNTombamentoAndIdNot(String nTombamento, Long id);
-
-    @Query("""
-    SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
-    FROM Exemplar e
-    WHERE e.nTombamento = :nTombamento
-    """)
-    boolean existeTombamento(String nTombamento);
-
-    @Query("""
-    SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
-    FROM Exemplar e
-    WHERE e.nTombamento = :nTombamento
-    AND e.id <> :id
-    """)
-    boolean existeTombamentoEmOutroExemplar(
-            String nTombamento,
-            Long id
-    );
+    List<Exemplar> findByLivro_id(Long id_livro);
 }

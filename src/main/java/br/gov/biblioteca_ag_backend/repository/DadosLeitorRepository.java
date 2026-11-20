@@ -4,5 +4,5 @@ import br.gov.biblioteca_ag_backend.model.DadosLeitor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DadosLeitorRepository extends JpaRepository<DadosLeitor, Long> {
-    boolean existsByUsuario_Id(Long idUsuario);
+    DadosLeitor findByUsuario_Id(Long idUsuario);
 }
