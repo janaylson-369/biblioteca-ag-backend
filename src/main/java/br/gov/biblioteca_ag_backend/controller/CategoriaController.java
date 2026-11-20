@@ -1,3 +1,4 @@
+
 package br.gov.biblioteca_ag_backend.controller;
 
 import br.gov.biblioteca_ag_backend.dto.categoria.CategoriaRespostaDTO;
@@ -25,7 +26,8 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResumoDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CategoriaResumoDTO> buscarPorId(
+            @PathVariable Long id) {
         return ResponseEntity.ok(categoriaService.buscarPorId(id));
     }
 
@@ -55,6 +57,7 @@ public class CategoriaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
+
         categoriaService.excluir(id);
 
         return ResponseEntity.noContent().build();

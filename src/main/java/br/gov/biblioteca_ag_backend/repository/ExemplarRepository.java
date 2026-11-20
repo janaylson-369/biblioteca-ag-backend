@@ -3,6 +3,7 @@ package br.gov.biblioteca_ag_backend.repository;
 import br.gov.biblioteca_ag_backend.enums.StatusExemplar;
 import br.gov.biblioteca_ag_backend.model.Exemplar;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

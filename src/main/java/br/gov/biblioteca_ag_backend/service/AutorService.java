@@ -1,3 +1,4 @@
+
 package br.gov.biblioteca_ag_backend.service;
 
 import br.gov.biblioteca_ag_backend.dto.autor.AutorRespostaDTO;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class AutorService {
+
     private final AutorRepository autorRepository;
     private final LivroRepository livroRepository;
 
@@ -28,6 +30,7 @@ public class AutorService {
         this.livroRepository = livroRepository;
     }
 
+    @Transactional
     public AutorRespostaDTO cadastrar(CriarAutorDTO dto) {
         Autor autor = new Autor();
         autor.setNome(dto.nome());

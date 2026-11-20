@@ -1,5 +1,6 @@
 package br.gov.biblioteca_ag_backend.dto.exemplar;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
