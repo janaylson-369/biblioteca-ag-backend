@@ -1,13 +1,10 @@
 package br.gov.biblioteca_ag_backend.dto.emprestimo;
 
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
 public record CriarEmprestimoDTO(
-        Long id_reserva,
-
         @NotNull(message = "campo nao deve ser nulo")
         Long id_usuario,
 
@@ -15,7 +12,8 @@ public record CriarEmprestimoDTO(
         Long id_exemplar,
 
         @NotNull(message = "campo nao deve ser nulo")
-        @Future(message = "invalido, campo deve possuir data no futuro")
-        LocalDateTime dataPrevisaoDevolucao
+        @Min(value = 3, message = "minimo de 3 dias para devolucao")
+        @Max(value = 30, message = "maximo de 30 dias para devolucao")
+        long diasEmprestimo
 ) {
 }

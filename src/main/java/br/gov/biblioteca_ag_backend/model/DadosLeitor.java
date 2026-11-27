@@ -44,13 +44,13 @@ public class DadosLeitor {
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String logradouro;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String numero;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String complemento;
 
-    @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
+    @Size(max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String bairro;
 
     @Size(min = 0,max = 255, message = "campo deve ser preenchido.")

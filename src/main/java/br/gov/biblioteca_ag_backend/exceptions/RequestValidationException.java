@@ -2,6 +2,7 @@ package br.gov.biblioteca_ag_backend.exceptions;
 
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
