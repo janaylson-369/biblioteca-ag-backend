@@ -1,6 +1,7 @@
 package br.gov.biblioteca_ag_backend.service;
 
 import br.gov.biblioteca_ag_backend.model.Usuario;
+import br.gov.biblioteca_ag_backend.security.UsuarioUserDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -20,7 +21,7 @@ public class TokenService {
     private String secret;
 
     // 1. GERAÇÃO DO TOKEN
-    public String gerarToken(Usuario usuario) {
+    public String gerarToken(UsuarioUserDetails usuario) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()

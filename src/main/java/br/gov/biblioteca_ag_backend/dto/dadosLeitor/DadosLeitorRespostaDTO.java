@@ -16,7 +16,7 @@ public record DadosLeitorRespostaDTO(
     public static DadosLeitorRespostaDTO fromEntity(DadosLeitor dl) {
         return new DadosLeitorRespostaDTO(
           dl.getId(),
-          dl.getUsuario().getId(),
+          dl.getUsuario().getIdUsuario(),
           dl.getDataNascimento(),
           dl.getLogradouro(),
           dl.getNumero(),

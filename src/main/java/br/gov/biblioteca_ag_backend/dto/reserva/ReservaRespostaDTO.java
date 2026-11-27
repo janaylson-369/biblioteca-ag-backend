@@ -18,7 +18,7 @@ public record ReservaRespostaDTO(
     public static ReservaRespostaDTO fromEntity(Reserva reserva) {
         return new ReservaRespostaDTO(
                 reserva.getId(),
-                reserva.getUsuario().getId(),
+                reserva.getUsuario().getIdUsuario(),
                 reserva.getUsuario().getNome(),
                 reserva.getLivro().getId(),
                 reserva.getLivro().getTitulo(),

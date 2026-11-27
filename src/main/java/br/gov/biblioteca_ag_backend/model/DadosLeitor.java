@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @Getter
 @Setter
@@ -32,6 +34,13 @@ public class DadosLeitor {
     @Column(nullable = false)
     private Boolean bloqueio = false;
 
+    @Column(name = "motivo_bloqueio")
+    private String motivoBloqueio;
+
+    @Column(name = "bloqueio_ate")
+    private LocalDate bloqueioAte;
+
+
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String logradouro;
 
@@ -44,6 +53,15 @@ public class DadosLeitor {
     @Size(min = 0, max = 255, message = "campo deve ter entre 0 e 255 caractereres.")
     private String bairro;
 
+    @Size(min = 0,max = 255, message = "campo deve ser preenchido.")
+    private String nomeResponsavel;
+
+    @Size(min = 0,max = 255, message = "campo deve ser preenchido.")
+    private String contatoResponsavel;
+
+    @Column(name = "consentimento_responsavel_em")
+    private LocalDateTime consentimentoResponsavelEm;
+
     public DadosLeitor(Usuario usuario, LocalDate dataNascimento, String logradouro, String numero, String complemento, String bairro) {
         this.usuario = usuario;
         this.dataNascimento = dataNascimento;
@@ -53,15 +71,37 @@ public class DadosLeitor {
         this.bairro = bairro;
     }
 
-    public void aplicarBloqueio() {
-        setBloqueio(true);
+
+    public void aplicarBloqueio(String motivo, LocalDate ate) {
+        if (motivo == null || motivo.isBlank()){
+            throw new IllegalStateException("O motivo do bloqueio é obrigatório.");
+        }
+        if (ate == null || ate.isBefore(LocalDate.now())){
+            throw new IllegalArgumentException("A data final do bloqueio deve ser hoje ou uma data futura.");
+        }
+
+        this.motivoBloqueio = motivo;
+        this.bloqueioAte = ate;
+
     }
 
     public void removerBloqueio() {
-        setBloqueio(false);
+        this.motivoBloqueio = null;
+        this.bloqueioAte = null;
     }
 
     public boolean estaBloqueado() {
-        return bloqueio;
+        if (this.bloqueioAte == null){
+            return false;
+        }
+        return !LocalDate.now().isAfter(this.bloqueioAte);
+    }
+
+    public boolean isMenorDeDozeAnos(){
+        if (this.dataNascimento == null){
+            return false;
+        }
+        int idade = Period.between(this.dataNascimento,LocalDate.now()).getYears();
+        return idade < 12;
     }
 }

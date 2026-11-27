@@ -4,11 +4,11 @@ import br.gov.biblioteca_ag_backend.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
 
-    UserDetails findByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 
-    List<Usuario> findByNomeStartingWith(String nome);
+    Optional<Usuario> findByNomeStartingWith(String nome);
 }

@@ -10,7 +10,7 @@ public record UsuarioResumoDTO(
 ) {
     public static UsuarioResumoDTO fromEntity(Usuario u) {
         return new UsuarioResumoDTO(
-                u.getId(),
+                u.getIdUsuario(),
                 u.getNome(),
                 u.getTelefone(),
                 u.getEmail()

@@ -4,32 +4,26 @@ import br.gov.biblioteca_ag_backend.enums.TipoUsuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_usuarios")
-public class Usuario implements UserDetails{
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idUsuario;
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.EAGER)
     private DadosLeitor dadosLeitor;
@@ -41,75 +35,79 @@ public class Usuario implements UserDetails{
     private List<Reserva> reservas = new ArrayList<>();
 
     @Column(nullable = false)
-    @NotBlank(message = "campo não pode ficar em branco.")
-    @Size(min = 1, max = 100, message = "campo deve ficar entre 1 a 100 caracteres.")
+    @NotBlank(message = "Campo não pode ficar em branco.")
+    @Size(min = 1, max = 100, message = "Campo deve ficar entre 1 e 100 caracteres.")
     private String nome;
 
-    @Size(min = 1, max = 20, message = "campo deve ficar entre 1 e 20 caracteres.")
+    @Size(min = 1, max = 20, message = "Campo deve ficar entre 1 e 20 caracteres.")
     private String telefone;
 
     @Column(unique = true)
-    @Email(message = "campo deve ser preenchido com um email.")
+    @Email(message = "Campo deve ser preenchido com um e-mail válido.")
     private String email;
 
-    @Column(nullable = false)
-    @NotBlank(message = "campo deve ser preenchido")
-    private String senha_hash;
+    @Column(name = "senha_hash", nullable = false)
+    @NotBlank(message = "Campo deve ser preenchido.")
+    private String senhaHash;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario = TipoUsuario.LEITOR;
 
-    public Usuario(String nome, String telefone, String email, String senha_hash) {
+    @Column(nullable = false)
+    private boolean ativo = false;
+
+    @Column(name = "aceite_privacidade_em")
+    private LocalDateTime aceitePrivacidadeEm;
+
+    @Column(name = "versao_politica_aceita", length = 20)
+    private String versaoPoliticaAceita;
+
+    @Column(name = "ultimo_acesso_em")
+    private LocalDateTime ultimoAcessoEm;
+
+    @Column(name = "anonimizado_em")
+    private LocalDateTime anonimizadoEm;
+
+    public Usuario(String nome, String telefone, String email, String senhaHash) {
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
-        this.senha_hash = senha_hash;
+        this.senhaHash = senhaHash;
+        this.ativo = false;
     }
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (tipoUsuario == TipoUsuario.ADMIN) return List.of(
-                new SimpleGrantedAuthority("ROLE_ADMIN"),
-                new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
-                new SimpleGrantedAuthority("ROLE_USUARIO"));
-
-        if (tipoUsuario == TipoUsuario.BIBLIOTECARIO) return List.of(
-                new SimpleGrantedAuthority("ROLE_FUNCIONARIO"),
-                new SimpleGrantedAuthority("ROLE_USUARIO"));
-
-        return List.of(new SimpleGrantedAuthority("ROLE_USUARIO"));
+    public void registrarAceitePrivacidade(String versaoAtualPolitica) {
+        if (versaoAtualPolitica == null || versaoAtualPolitica.isBlank()) {
+            throw new IllegalArgumentException("A versão da política de privacidade é obrigatória.");
+        }
+        this.versaoPoliticaAceita = versaoAtualPolitica;
+        this.aceitePrivacidadeEm = LocalDateTime.now();
     }
 
-    @Override
-    public @Nullable String getPassword() {
-        return this.senha_hash;
+    public boolean autenticar(String informarSenha) {
+        if (!this.ativo || informarSenha == null) return false;
+        return this.senhaHash.equals(informarSenha);
     }
 
-    @Override
-    public String getUsername() {
-        return this.email;
+    public void registrarAcesso() {
+        this.ultimoAcessoEm = LocalDateTime.now();
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public void alterarSenha(String novaSenhaHash) {
+        if (novaSenhaHash == null || novaSenhaHash.isBlank()) {
+            throw new IllegalArgumentException("Nova senha não pode estar vazia.");
+        }
+        this.senhaHash = novaSenhaHash;
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
+    public void anonimizarTitular() {
+        String idAnonimo = UUID.randomUUID().toString().substring(0, 8);
+        this.nome = "Titular Anonimizado";
+        this.telefone = null;
+        this.email = "anonimo_" + idAnonimo + "@biblioteca.local";
+        this.senhaHash = UUID.randomUUID().toString();
+        this.ativo = false;
+        this.anonimizadoEm = LocalDateTime.now();
     }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
 }

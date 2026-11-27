@@ -10,12 +10,12 @@ public record DadosLeitorCompletoDTO (
         String email,
         DadosLeitorResumoDTO dadosLeitor
 ) {
-    public static DadosLeitorCompletoDTO fromEntity(Usuario u, DadosLeitor dl) {
+    public static DadosLeitorCompletoDTO fromEntity(Usuario use, DadosLeitor dl) {
         return new DadosLeitorCompletoDTO(
-                u.getId(),
-                u.getNome(),
-                u.getTelefone(),
-                u.getEmail(),
+                use.getIdUsuario(),
+                use.getNome(),
+                use.getTelefone(),
+                use.getEmail(),
                 DadosLeitorResumoDTO.fromEntity(dl)
         );
     }
