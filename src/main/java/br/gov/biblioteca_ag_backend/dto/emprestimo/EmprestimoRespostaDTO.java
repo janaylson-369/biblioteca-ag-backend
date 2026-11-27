@@ -20,7 +20,7 @@ public record EmprestimoRespostaDTO(
     public static EmprestimoRespostaDTO fromEntity(Emprestimo em) {
         return new EmprestimoRespostaDTO(
                 em.getId(),
-                em.getUsuario().getId(),
+                em.getUsuario().getIdUsuario(),
                 em.getUsuario().getNome(),
                 em.getExemplar().getId(),
                 em.getExemplar().getLivro().getTitulo(),

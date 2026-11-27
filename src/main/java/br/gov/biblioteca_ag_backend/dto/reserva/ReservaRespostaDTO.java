@@ -25,11 +25,10 @@ public record ReservaRespostaDTO(
 
         return new ReservaRespostaDTO(
                 reserva.getId(),
-                u.getId(),
-                u.getNome(),
-                l.getId(),
-                l.getTitulo(),
-                reserva.getDataReserva(),
-                reserva.getStatus());
+                reserva.getUsuario().getIdUsuario(),
+                reserva.getUsuario().getNome(),
+                reserva.getLivro().getId(),
+                reserva.getLivro().getTitulo(),
+                reserva.getDataReserva());
     }
 }

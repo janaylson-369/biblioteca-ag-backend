@@ -9,6 +9,6 @@ public record UsuarioRespostaDTO(
         String email
 ) {
     public static UsuarioRespostaDTO fromEntity(Usuario usuario) {
-        return new UsuarioRespostaDTO(usuario.getId(), usuario.getNome(), usuario.getTelefone(), usuario.getEmail());
+        return new UsuarioRespostaDTO(usuario.getIdUsuario(), usuario.getNome(), usuario.getTelefone(), usuario.getEmail());
     }
 }

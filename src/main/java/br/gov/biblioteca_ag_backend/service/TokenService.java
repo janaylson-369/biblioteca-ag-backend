@@ -1,16 +1,19 @@
-package br.gov.biblioteca_ag_backend.validation;
+package br.gov.biblioteca_ag_backend.service;
 
 import br.gov.biblioteca_ag_backend.model.Usuario;
+import br.gov.biblioteca_ag_backend.security.UsuarioUserDetails;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Service
 public class TokenService {
     //API_SECURITY_TOKEN_SECRET
     @Value("${API_SECURITY_TOKEN_SECRET}")
@@ -18,7 +21,7 @@ public class TokenService {
     private String secret;
 
     // 1. GERAÇÃO DO TOKEN
-    public String generateToken(Usuario usuario) {
+    public String gerarToken(UsuarioUserDetails usuario) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()

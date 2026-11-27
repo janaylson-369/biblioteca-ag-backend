@@ -5,6 +5,7 @@ import br.gov.biblioteca_ag_backend.exceptions.ResourceNotFoundException;
 import br.gov.biblioteca_ag_backend.model.Usuario;
 import br.gov.biblioteca_ag_backend.repository.DadosLeitorRepository;
 import br.gov.biblioteca_ag_backend.repository.UsuarioRepository;
+import br.gov.biblioteca_ag_backend.security.UsuarioUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,8 +46,10 @@ public class UsuarioService implements UserDetailsService {
 
         u.setNome(dto.nome());
         u.setEmail(dto.email());
-        u.setSenha_hash(senhaHash);
+        u.setSenhaHash(senhaHash);
         u.setTelefone(dto.telefone());
+        u.setAtivo(true);
+        u.registrarAceitePrivacidade("v1.0");
 
         Usuario salvo = usuarioRepository.save(u);
 
@@ -98,9 +101,10 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.deleteById(id);
     }
 
-    //
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByLogin(username);
+        Usuario usuario = usuarioRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
+        return new UsuarioUserDetails(usuario);
     }
 }
